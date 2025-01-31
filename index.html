@@ -1,0 +1,490 @@
+
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Modern Bookmarks with Categories</title>
+    <style>
+        :root {
+            --primary-color: #4a90e2;
+            --background-color: #f5f7fa;
+            --card-bg: #ffffff;
+            --text-color: #2d3436;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', system-ui, sans-serif;
+        }
+
+        body {
+            background-color: var(--background-color);
+            color: var(--text-color);
+            line-height: 1.6;
+        }
+
+        .categories-sidebar {
+            width: 200px;
+            position: fixed;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            background: var(--card-bg);
+            padding: 1rem;
+            box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
+            overflow-y: auto;
+        }
+
+        .category-item {
+            padding: 0.5rem;
+            margin: 0.25rem 0;
+            border-radius: 6px;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: background 0.2s;
+        }
+
+        .category-item:hover {
+            background: #f0f0f0;
+        }
+
+        .active-category {
+            background: var(--primary-color);
+            color: white;
+        }
+
+        .category-actions {
+            display: none;
+        }
+
+        .category-item:hover .category-actions {
+            display: flex;
+            gap: 5px;
+        }
+
+        .category-badge {
+            background: var(--primary-color);
+            color: white;
+            padding: 2px 8px;
+            border-radius: 12px;
+            font-size: 0.8rem;
+            margin-left: 0.5rem;
+        }
+
+        .container {
+            margin-left: 220px;
+            max-width: calc(100% - 220px);
+            padding: 2rem;
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+        }
+
+        h1 {
+            color: var(--primary-color);
+            font-size: 2.5rem;
+        }
+
+        .btn {
+            padding: 0.8rem 1.5rem;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: transform 0.2s;
+            background-color: var(--primary-color);
+            color: white;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+        }
+
+        .bookmark-form {
+            background: var(--card-bg);
+            padding: 2rem;
+            border-radius: 16px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            margin-bottom: 2rem;
+            display: none;
+        }
+
+        .form-group {
+            margin-bottom: 1rem;
+        }
+
+        input[type="text"], select {
+            width: 100%;
+            padding: 0.8rem;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            font-size: 1rem;
+        }
+
+        .bookmarks-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .bookmark-card {
+            background: var(--card-bg);
+            padding: 1.5rem;
+            border-radius: 12px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            transition: transform 0.2s;
+            position: relative;
+            min-height: 120px;
+        }
+
+        .bookmark-card:hover {
+            transform: translateY(-4px);
+        }
+
+        .bookmark-title {
+            font-size: 1.2rem;
+            margin-bottom: 0.5rem;
+            color: var(--primary-color);
+        }
+
+        .bookmark-url {
+            color: #666;
+            word-break: break-all;
+            margin-bottom: 1rem;
+        }
+
+        .delete-btn {
+            background: #ff4757;
+            color: white;
+            padding: 0.4rem 0.8rem;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            display: none;
+            position: absolute;
+            top: 10px;
+            right: 70px;
+        }
+
+        .bookmark-card:hover .delete-btn {
+            display: inline-block;
+        }
+
+        .bookmark-card a.btn {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            padding: 0.4rem 0.8rem;
+            text-decoration: none;
+            font-size: 0.9rem;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: white;
+            padding: 2rem;
+            border-radius: 12px;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.2);
+            z-index: 1000;
+        }
+
+        #importInput {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="categories-sidebar">
+        <div style="margin-bottom: 1rem;">
+            <button class="btn" onclick="showCategoryModal()">新建分类</button>
+        </div>
+        <div id="categoriesList"></div>
+    </div>
+
+    <div id="categoryModal" class="modal">
+        <h2>分类管理</h2>
+        <input type="text" id="categoryName" placeholder="分类名称" class="form-control">
+        <div style="margin-top: 1.5rem; display: flex; gap: 1rem;">
+            <button class="btn" onclick="saveCategory()">保存</button>
+            <button class="btn" onclick="hideCategoryModal()">取消</button>
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="header">
+            <h1>Modern Bookmarks</h1>
+            <div>
+                <button class="btn" onclick="toggleForm()">添加书签</button>
+                <button class="btn" onclick="handleImport()">导入HTML</button>
+                <button class="btn" onclick="exportHTML()">导出HTML</button>
+                <input type="file" id="importInput" accept=".html">
+            </div>
+        </div>
+
+        <form id="bookmarkForm" class="bookmark-form">
+            <div class="form-group">
+                <input type="text" id="title" placeholder="书签标题">
+            </div>
+            <div class="form-group">
+                <input type="text" id="url" placeholder="URL (以http://或https://开头)">
+            </div>
+            <div class="form-group">
+                <select id="category">
+                    <option value="">选择分类</option>
+                </select>
+            </div>
+            <button type="submit" class="btn">保存书签</button>
+        </form>
+
+        <div class="bookmarks-grid" id="bookmarksList"></div>
+    </div>
+
+    <script>
+        let categories = JSON.parse(localStorage.getItem('categories')) || [
+            { id: 1, name: '未分类', count: 0 }
+        ];
+        let bookmarks = JSON.parse(localStorage.getItem('bookmarks')) || [];
+        let currentCategory = 1;
+
+        function saveAllData() {
+            localStorage.setItem('bookmarks', JSON.stringify(bookmarks));
+            localStorage.setItem('categories', JSON.stringify(categories));
+        }
+
+        function renderCategories() {
+            const container = document.getElementById('categoriesList');
+            container.innerHTML = categories.map(cat => `
+                <div class="category-item ${currentCategory === cat.id ? 'active-category' : ''}" 
+                     onclick="changeCategory(${cat.id})">
+                    <span>${cat.name}</span>
+                    <div class="category-actions">
+                        <button onclick="editCategory(${cat.id}, event)">✏️</button>
+                        <button onclick="deleteCategory(${cat.id}, event)">🗑️</button>
+                    </div>
+                    <span class="category-badge">${bookmarks.filter(b => b.category === cat.id).length}</span>
+                </div>
+            `).join('');
+        }
+
+        function updateCategorySelect() {
+            const select = document.getElementById('category');
+            select.innerHTML = `
+                <option value="">选择分类</option>
+                ${categories.map(cat => `
+                    <option value="${cat.id}">${cat.name}</option>
+                `).join('')}
+            `;
+        }
+
+        function changeCategory(catId) {
+            currentCategory = catId;
+            renderCategories();
+            renderBookmarks();
+        }
+
+        function showCategoryModal(editId) {
+            const modal = document.getElementById('categoryModal');
+            modal.dataset.editId = editId || '';
+            modal.style.display = 'block';
+            document.getElementById('categoryName').value = editId 
+                ? categories.find(c => c.id === editId).name 
+                : '';
+        }
+
+        function hideCategoryModal() {
+            document.getElementById('categoryModal').style.display = 'none';
+        }
+
+        function saveCategory() {
+            const name = document.getElementById('categoryName').value.trim();
+            const editId = parseInt(document.getElementById('categoryModal').dataset.editId);
+            
+            if(!name) return alert('请输入分类名称');
+            
+            if(editId) {
+                const index = categories.findIndex(c => c.id === editId);
+                categories[index].name = name;
+            } else {
+                const newId = Math.max(...categories.map(c => c.id)) + 1;
+                categories.push({ id: newId, name: name, count: 0 });
+            }
+            
+            saveAllData();
+            renderCategories();
+            updateCategorySelect();
+            hideCategoryModal();
+        }
+
+        function deleteCategory(catId) {
+            if(catId === 1) return alert('默认分类不能删除');
+            if(!confirm(`确定要删除该分类吗？相关书签将移至"未分类"`)) return;
+            
+            bookmarks.forEach(b => {
+                if(b.category === catId) b.category = 1;
+            });
+            
+            categories = categories.filter(c => c.id !== catId);
+            
+            saveAllData();
+            renderCategories();
+            renderBookmarks();
+            updateCategorySelect();
+        }
+
+        function toggleForm() {
+            const form = document.getElementById('bookmarkForm');
+            form.style.display = form.style.display === 'none' ? 'block' : 'none';
+        }
+
+        document.getElementById('bookmarkForm').addEventListener('submit', e => {
+            e.preventDefault();
+            const title = document.getElementById('title').value;
+            const url = document.getElementById('url').value;
+            const category = document.getElementById('category').value || 1;
+
+            if (title && isValidUrl(url)) {
+                bookmarks.push({ 
+                    title, 
+                    url,
+                    category: parseInt(category) || 1,
+                    date: new Date().getTime()
+                });
+                saveAllData();
+                renderBookmarks();
+                toggleForm();
+                e.target.reset();
+            } else {
+                alert('请输入有效的标题和URL');
+            }
+        });
+
+        function renderBookmarks() {
+            const filtered = bookmarks.filter(b => b.category === currentCategory);
+            const list = document.getElementById('bookmarksList');
+            list.innerHTML = filtered.map((bookmark, index) => `
+                <div class="bookmark-card">
+                    <div class="bookmark-title">${bookmark.title}</div>
+                    <div class="bookmark-url">${bookmark.url}</div>
+                    <select class="category-select" onchange="updateBookmarkCategory(${index}, this.value)" 
+                            style="position: absolute; bottom: 10px; right: 10px; width: 120px; padding: 0.3rem;">
+                        ${categories.map(cat => `
+                            <option value="${cat.id}" ${bookmark.category === cat.id ? 'selected' : ''}>
+                                ${cat.name}
+                            </option>
+                        `).join('')}
+                    </select>
+                    <button class="delete-btn" onclick="deleteBookmark(${index})">删除</button>
+                    <a href="${bookmark.url}" target="_blank" class="btn">访问</a>
+                </div>
+            `).join('');
+        }
+
+        function updateBookmarkCategory(index, catId) {
+            bookmarks[index].category = parseInt(catId);
+            saveAllData();
+            renderCategories();
+            renderBookmarks();
+        }
+
+        function deleteBookmark(index) {
+            if(confirm('确定要删除这个书签吗？')) {
+                bookmarks.splice(index, 1);
+                saveAllData();
+                renderBookmarks();
+                renderCategories();
+            }
+        }
+
+        function isValidUrl(url) {
+            try {
+                new URL(url);
+                return true;
+            } catch {
+                return false;
+            }
+        }
+
+        function handleImport() {
+            document.getElementById('importInput').click();
+        }
+
+        document.getElementById('importInput').addEventListener('change', e => {
+            const file = e.target.files[0];
+            const reader = new FileReader();
+
+            reader.onload = function(event) {
+                const parser = new DOMParser();
+                const htmlDoc = parser.parseFromString(event.target.result, "text/html");
+                const links = htmlDoc.querySelectorAll('a');
+                
+                const importedBookmarks = [];
+                links.forEach(link => {
+                    if(isValidUrl(link.href)) {
+                        importedBookmarks.push({
+                            title: link.textContent.trim(),
+                            url: link.href,
+                            category: 1, // 默认导入到未分类
+                            date: new Date().getTime()
+                        });
+                    }
+                });
+
+                if(importedBookmarks.length > 0) {
+                    if(confirm(`发现 ${importedBookmarks.length} 个书签，是否合并到现有书签？`)) {
+                        bookmarks = [...bookmarks, ...importedBookmarks];
+                        saveAllData();
+                        renderBookmarks();
+                        renderCategories();
+                    }
+                } else {
+                    alert('未找到有效书签');
+                }
+            };
+            reader.readAsText(file);
+        });
+
+        function exportHTML() {
+            const htmlContent = `<!DOCTYPE NETSCAPE-Bookmark-file-1>
+<!-- This is an automatically generated file -->
+<META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=UTF-8">
+<TITLE>Bookmarks</TITLE>
+<H1>Bookmarks</H1>
+<DL><p>
+    ${bookmarks.map(bookmark => `
+    <DT><A HREF="${bookmark.url}" ADD_DATE="${Math.floor(bookmark.date/1000)}">${bookmark.title}</A>
+    `).join('\n')}
+</DL><p>`;
+
+            const blob = new Blob([htmlContent], {type: 'text/html'});
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `bookmarks_${new Date().toISOString().split('T')[0]}.html`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+        }
+
+        // 初始化
+        function init() {
+            renderCategories();
+            updateCategorySelect();
+            renderBookmarks();
+        }
+        init();
+    </script>
+</body>
+</html>
