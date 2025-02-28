@@ -7,7 +7,7 @@ body {
 }
 
 .container {
-  max-width: 1200px;
+  max-width: 2000px;
   margin: 20px auto;
   padding: 20px;
   background-color: #fff;
@@ -44,6 +44,7 @@ body {
   cursor: pointer;
   background-color: transparent;
   transition: all 0.3s ease;
+  font-weight: bold;
 }
 
 .button:hover {
