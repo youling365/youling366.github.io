@@ -116,19 +116,19 @@ html, body {
 }
 
 /* 响应式设计 */
-@media (max-width: 768px) {
+@media (max-width: 400px) {
   .button-group .button {
     flex: 0 0 calc(25% - 10px);
   }
 }
 
-@media (max-width: 576px) {
+@media (max-width: 400px) {
   .button-group .button {
     flex: 0 0 calc(50% - 10px);
   }
 }
 
-@media (max-width: 480px) {
+@media (max-width: 400px) {
   .button-group .button {
     flex: 0 0 calc(100% - 10px);
   }
