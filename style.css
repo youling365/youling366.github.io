@@ -36,11 +36,11 @@ body {
 
 .button {
   width: 100%;
-  padding: 12px;
+  padding: 10px;
   border: 2px solid #666;
-  border-radius: 20px;
+  border-radius: 15px;
   color: #333;
-  font-size: 12px;
+  font-size: 10px;
   cursor: pointer;
   background-color: transparent;
   transition: all 0.3s ease;
