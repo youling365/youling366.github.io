@@ -1,5 +1,4 @@
 const navData = [
-  
   {
     name: "号卡导航",
     links: [
@@ -13,7 +12,6 @@ const navData = [
       { name: "卡多多物联", url: "http://www.dandan.tianiot.com/wlkys/index.html" }
     ]
   },
- 
   {
     name: "资源导航",
     links: [
@@ -30,7 +28,6 @@ const navData = [
       { name: "安卓软件库", url: "https://asjfxk.lanzouq.com/b092u27de" }
     ]
   },
-
   {
     name: "其他导航",
     links: [
@@ -38,6 +35,5 @@ const navData = [
       { name: "网址安全中心", url: "https://bsb.baidu.com/" },
       { name: "爱分享导航", url: "https://www.afx5.cn/friendship-links" },
     ]
-  },
-  
+  }, 
 ];
