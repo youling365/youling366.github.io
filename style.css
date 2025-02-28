@@ -1,0 +1,180 @@
+body {
+    font-family: 'Segoe UI', system-ui, sans-serif;
+    margin: 0;
+    padding: 0;
+    background: #ffffff;
+    color: #2d3748;
+    min-height: 100vh;
+}
+
+.container {
+    max-width: 800px;
+    margin: 20px auto;
+    padding: 25px;
+    background: rgba(255, 255, 255, 0.95);
+    border-radius: 16px;
+    box-shadow: 0 12px 32px rgba(0, 0, 0, 0.08);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    animation: cardEntrance 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+/* 新增科技感卡片动画 */
+@keyframes cardEntrance {
+    0% {
+        transform: translateY(20px);
+        opacity: 0;
+    }
+    100% {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}
+
+.category {
+    font-size: 20px;
+    font-weight: 600;
+    margin: 25px 0;
+    color: #1a365d;
+    position: relative;
+    padding-left: 15px;
+}
+
+.category::before {
+    content: "";
+    position: absolute;
+    left: 0;
+    top: 50%;
+    transform: translateY(-50%);
+    height: 60%;
+    width: 3px;
+    background: linear-gradient(180deg, #4299e1 0%, #3182ce 100%);
+}
+
+.button-group {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(60px, 1fr));
+    gap: 10px;
+    margin: 10px 0;
+}
+
+.button {
+    background: #2d3748;
+    color: #fff;
+    padding: 10px;
+    border: none;
+    border-radius: 8px;
+    font-size: 10px;
+    cursor: pointer;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    position: relative;
+    overflow: hidden;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+}
+
+.button::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(
+        120deg,
+        transparent,
+        rgba(255, 255, 255, 0.15),
+        transparent
+    );
+    transition: 0.6s;
+}
+
+.button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 15px rgba(0, 0, 0, 0.12);
+    background: #1a202c;
+}
+
+.button:hover::before {
+    left: 100%;
+}
+
+/* 登录框样式更新 */
+#loginOverlay {
+    background: rgba(255, 255, 255, 0.96);
+}
+
+.login-box {
+    background: #ffffff;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.12);
+    border: 1px solid rgba(0, 0, 0, 0.08);
+    padding: 40px 50px;
+}
+
+.login-box input {
+    background: #f7fafc;
+    border: 1px solid #e2e8f0;
+    color: #2d3748;
+    transition: border-color 0.3s;
+}
+
+.login-box input:focus {
+    border-color: #4299e1;
+    outline: none;
+}
+
+.login-box button {
+    background: linear-gradient(135deg, #4299e1 0%, #3182ce 100%);
+    color: white;
+    font-weight: 500;
+    box-shadow: 0 4px 6px rgba(66, 153, 225, 0.15);
+}
+
+.login-box button:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 6px 12px rgba(66, 153, 225, 0.25);
+}
+
+/* 搜索框样式更新 */
+#searchInput {
+    background: #f7fafc;
+    border: 1px solid #e2e8f0;
+    color: #2d3748;
+    transition: all 0.3s;
+}
+
+#searchInput:focus {
+    border-color: #4299e1;
+    box-shadow: 0 0 0 3px rgba(66, 153, 225, 0.2);
+}
+
+/* 时钟样式更新 */
+.clock-container {
+    color: #4299e1;
+    font-weight: 500;
+    text-shadow: 0 2px 4px rgba(66, 153, 225, 0.1);
+}
+
+/* 返回顶部按钮 */
+#backToTop {
+    background: #2d3748;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    transition: all 0.3s;
+}
+
+#backToTop:hover {
+    background: #1a202c;
+    transform: translateY(-2px);
+}
+
+/* 新增科技感分割线 */
+.announcement {
+    background: #f7fafc;
+    border: 1px solid #e2e8f0;
+    color: #4299e1;
+    font-weight: 500;
+    border-radius: 8px;
+}
+
+marquee {
+    padding: 12px 0;
+}
