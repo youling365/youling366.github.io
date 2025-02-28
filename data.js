@@ -37,7 +37,6 @@ const navData = [
       { name: "ABMS系统", url: "http://111.6.174.195:6060/master/login.do" },
       { name: "网址安全中心", url: "https://bsb.baidu.com/" },
       { name: "爱分享导航", url: "https://www.afx5.cn/friendship-links" },
-      { name: "   ", url: "   " },
     ]
   },
   
