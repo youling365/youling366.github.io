@@ -25,7 +25,6 @@ const navData = [
       { name: "流量消耗器", url: "https://net.ljxnet.cn" },
       { name: "移动爱家会员", url: "https://hy.10086.cn/s/fsr" },
       { name: "影视软件库", url: "https://678cnn.lanzoub.com/b01pcae9c" }
-      { name: "安卓软件库", url: "https://asjfxk.lanzouq.com/b092u27de" }
     ]
   },
   {
